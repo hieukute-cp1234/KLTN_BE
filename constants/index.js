@@ -6,3 +6,9 @@ export const TOKEN = {
   KEY: "Access_Token_Secret",
   TIME: "24h",
 };
+
+export const STATUS_CODE = {
+  SERVER: 500,
+  VALIDATE: 400,
+  SUCCESS: 200,
+};

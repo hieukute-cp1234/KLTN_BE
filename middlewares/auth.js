@@ -1,7 +1,7 @@
 import { verityToken } from "../helpers/jwt.js";
 import { response } from "../helpers/index.js";
 
-export const verifyTken = async (req, res, next) => {
+export const authorization = async (req, res, next) => {
   try {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];

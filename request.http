@@ -5,3 +5,20 @@ Content-Type: application/json
   "email": "hieuvm@vnext.vn",
   "password": "123456"
 }
+
+###
+
+POST http://localhost:8080/api/process
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjQ2YjgyZjM0YzI5MGY2Y2M3NzA5MGEwIiwiaWF0IjoxNjg0ODU2MTgxLCJleHAiOjE2ODQ5NDI1ODF9.xsLLGGoEr4WSxzYMZC3mDrc4Gqe3c0FSP-X9Bgr6_jk
+
+{
+  "name": "quy trinh phat trien phan mem"
+}
+
+###
+
+
+GET http://localhost:8080/api/process
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjQ2YjgyZjM0YzI5MGY2Y2M3NzA5MGEwIiwiaWF0IjoxNjg0ODU2MTgxLCJleHAiOjE2ODQ5NDI1ODF9.xsLLGGoEr4WSxzYMZC3mDrc4Gqe3c0FSP-X9Bgr6_jk
