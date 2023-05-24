@@ -4,7 +4,15 @@ import { STATUS_CODE } from "../constants/index.js";
 
 const fetchAllProcess = async (req, res) => {
   try {
-    const allProcess = await process.find({});
+    const { userId, publish, status } = req.query;
+    const condition = {};
+
+    if (userId) condition.createByUser = userId;
+    if (publish) condition.publish = publish;
+    if (status) condition.status = status;
+
+    const allProcess = await process.find(condition);
+
     return res.status(STATUS_CODE.SUCCESS).json(response(allProcess, null));
   } catch (error) {
     return res.status(STATUS_CODE.SERVER).json(response(error));
@@ -29,7 +37,8 @@ const fetchProcessById = async (req, res) => {
 
 const createProcess = async (req, res) => {
   try {
-    const { name, description, workflow, listRole, project } = req.body;
+    const { name, description, listRole, project, nodes, edges, publish } =
+      req.body;
     const checkProcess = await process.findOne({ name });
 
     if (checkProcess) {
@@ -41,9 +50,12 @@ const createProcess = async (req, res) => {
     const newProcess = {
       name: name,
       description: description || "",
-      workflow: workflow || "",
+      nodes: nodes || [],
+      edges: edges || [],
       roles: listRole || [],
       project: project || [],
+      createByUser: req.user,
+      publish: publish || 1,
       status: 1,
     };
 
@@ -53,7 +65,6 @@ const createProcess = async (req, res) => {
       .status(STATUS_CODE.SUCCESS)
       .json(response(result, "tao process thanh cong"));
   } catch (error) {
-    console.log(error);
     return res.status(STATUS_CODE.SERVER).json(response(error));
   }
 };
@@ -97,8 +108,11 @@ const copyProcess = async (req, res) => {
     const newProcess = {
       name: `${processById.name} copy`,
       description: processById.description || "",
-      workflow: processById.workflow || "",
+      nodes: processById.nodes || [],
+      edges: processById.edges || [],
+      publish: processById.publish || 1,
       roles: processById.listRole || [],
+      createByUser: req.user,
       project: [],
       status: 1,
     };
