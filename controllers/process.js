@@ -1,4 +1,6 @@
-import process from "../modules/process.js";
+import processMobule from "../modules/process.js";
+import nodeModule from "../modules/nodes.js";
+import edgeModule from "../modules/edges.js";
 import { response } from "../helpers/index.js";
 import { STATUS_CODE } from "../constants/index.js";
 
@@ -11,7 +13,7 @@ const fetchAllProcess = async (req, res) => {
     if (publish) condition.publish = publish;
     if (status) condition.status = status;
 
-    const allProcess = await process.find(condition);
+    const allProcess = await processMobule.find(condition);
 
     return res.status(STATUS_CODE.SUCCESS).json(response(allProcess, null));
   } catch (error) {
@@ -21,7 +23,7 @@ const fetchAllProcess = async (req, res) => {
 
 const fetchProcessById = async (req, res) => {
   try {
-    const process = await process.findOne({ _id: req.params.id });
+    const process = await processMobule.findOne({ _id: req.params.id });
 
     if (!process) {
       return res
@@ -39,7 +41,7 @@ const createProcess = async (req, res) => {
   try {
     const { name, description, listRole, project, nodes, edges, publish } =
       req.body;
-    const checkProcess = await process.findOne({ name });
+    const checkProcess = await processMobule.findOne({ name });
 
     if (checkProcess) {
       return res
@@ -47,11 +49,24 @@ const createProcess = async (req, res) => {
         .json(response(null, "process da ton tai!"));
     }
 
+    if (!nodes?.length) {
+      return res
+        .status(STATUS_CODE.VALIDATE)
+        .json(response(null, "workflow chua dc nhap!"));
+    }
+
+    const newNodes = nodes.map((node) => ({
+      ...node,
+      ...node.data,
+    }));
+    const nodeInMongoose = await nodeModule.create(newNodes);
+    // const edgeInMongoose = await edgeModule.create(edges);
+
     const newProcess = {
       name: name,
       description: description || "",
-      nodes: nodes || [],
-      edges: edges || [],
+      nodes: nodeInMongoose.map((node) => node.id),
+      // edges: edgeInMongoose.map((edge) => edge.id),
       roles: listRole || [],
       project: project || [],
       createByUser: req.user,
@@ -59,12 +74,13 @@ const createProcess = async (req, res) => {
       status: 1,
     };
 
-    const result = await process.create(newProcess);
+    const result = await processMobule.create(newProcess);
 
     return res
       .status(STATUS_CODE.SUCCESS)
       .json(response(result, "tao process thanh cong"));
   } catch (error) {
+    console.log("error", error);
     return res.status(STATUS_CODE.SERVER).json(response(error));
   }
 };
@@ -72,7 +88,7 @@ const createProcess = async (req, res) => {
 const updateProcess = async (req, res) => {
   try {
     const { name } = req.body;
-    const checkProcess = await process.findOne({ name });
+    const checkProcess = await processMobule.findOne({ name });
 
     if (checkProcess) {
       return res
@@ -80,7 +96,7 @@ const updateProcess = async (req, res) => {
         .json(response(null, "ten process da ton tai!"));
     }
 
-    const result = await process.findByIdAndUpdate(
+    const result = await processMobule.findByIdAndUpdate(
       {
         _id: req.params.id,
       },
@@ -97,7 +113,7 @@ const updateProcess = async (req, res) => {
 
 const copyProcess = async (req, res) => {
   try {
-    const processById = process.findOne({ _id: req.params.id });
+    const processById = processMobule.findOne({ _id: req.params.id });
 
     if (!processById) {
       return res
@@ -117,7 +133,7 @@ const copyProcess = async (req, res) => {
       status: 1,
     };
 
-    const result = await process.create(newProcess);
+    const result = await processMobule.create(newProcess);
     return res
       .status(STATUS_CODE.SUCCESS)
       .json(response(result, "tao process thanh cong"));
@@ -128,7 +144,7 @@ const copyProcess = async (req, res) => {
 
 const deleteProcess = async (req, res) => {
   try {
-    const processDeleted = await process.deleteOne({
+    const processDeleted = await processMobule.deleteOne({
       _id: req.params.id,
     });
 
