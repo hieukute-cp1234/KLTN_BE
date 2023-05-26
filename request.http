@@ -13,12 +13,13 @@ content-type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjQ2YjgyZjM0YzI5MGY2Y2M3NzA5MGEwIiwiaWF0IjoxNjg0ODU2MTgxLCJleHAiOjE2ODQ5NDI1ODF9.xsLLGGoEr4WSxzYMZC3mDrc4Gqe3c0FSP-X9Bgr6_jk
 
 {
-  "name": "quy trinh phat trien phan mem bao mat ha1 111",
+  "name": "quy trinh phat trien 3",
   "nodes": [
     {
+      "_id": "6470cfe25a996a457577bab1",
       "type": "rectangleNode",
       "data": {
-        "title": "Text",
+        "title": "hieukute",
         "handles": [true, true, true, true],
         "handleTarget": ["target", "target", "source", "source"],
         "background": "#ffffff",
@@ -32,9 +33,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjQ2YjgyZ
       "position": { "x": 250, "y": 0 }
     },
     {
+      "_id": "6470d0665a996a457577bac2",
       "type": "rectangleNode",
       "data": {
-        "title": "Text",
+        "title": "hieu2",
         "handles": [true, true, true, true],
         "handleTarget": ["target", "target", "source", "source"],
         "background": "#ffffff",
@@ -54,7 +56,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjQ2YjgyZ
 ###
 
 
-GET http://localhost:8080/api/process
+GET http://localhost:8080/api/random-id
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjQ2YjgyZjM0YzI5MGY2Y2M3NzA5MGEwIiwiaWF0IjoxNjg0ODU2MTgxLCJleHAiOjE2ODQ5NDI1ODF9.xsLLGGoEr4WSxzYMZC3mDrc4Gqe3c0FSP-X9Bgr6_jk
 

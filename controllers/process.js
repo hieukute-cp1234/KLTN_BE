@@ -49,46 +49,59 @@ const createProcess = async (req, res) => {
         .json(response(null, "process da ton tai!"));
     }
 
-    if (!nodes?.length) {
+    if (!nodes?.length || !edges.length) {
       return res
         .status(STATUS_CODE.VALIDATE)
         .json(response(null, "workflow chua dc nhap!"));
     }
 
-    const newNodes = nodes.map((node) => ({
-      ...node,
-      ...node.data,
-    }));
-    const nodeInMongoose = await nodeModule.create(newNodes);
-    // const edgeInMongoose = await edgeModule.create(edges);
-
     const newProcess = {
       name: name,
       description: description || "",
-      nodes: nodeInMongoose.map((node) => node.id),
-      // edges: edgeInMongoose.map((edge) => edge.id),
+      nodes: nodes.map((node) => node.id),
+      edges: edges.map((edge) => edge.id),
       roles: listRole || [],
       project: project || [],
       createByUser: req.user,
       publish: publish || 1,
+      isDisabled: false,
       status: 1,
     };
 
     const result = await processMobule.create(newProcess);
 
+    const createNodes = nodes.map((node) => {
+      const newNode = {
+        ...node,
+        ...node.data,
+        _id: node.id,
+        process: result.id,
+      };
+      delete newNode.id;
+      return newNode;
+    });
+
+    const createEdges = edges.map((edge) => {
+      const newEdge = { ...edge, _id: edge.id, process: result.id };
+      delete newEdge.id;
+      return newEdge;
+    });
+
+    await nodeModule.create(createNodes);
+    await edgeModule.create(createEdges);
+
     return res
       .status(STATUS_CODE.SUCCESS)
       .json(response(result, "tao process thanh cong"));
   } catch (error) {
-    console.log("error", error);
     return res.status(STATUS_CODE.SERVER).json(response(error));
   }
 };
 
 const updateProcess = async (req, res) => {
   try {
-    const { name } = req.body;
-    const checkProcess = await processMobule.findOne({ name });
+    const { id, nodes, edges } = req.body;
+    const checkProcess = await processMobule.findOne({ _id: id });
 
     if (checkProcess) {
       return res
@@ -96,12 +109,20 @@ const updateProcess = async (req, res) => {
         .json(response(null, "ten process da ton tai!"));
     }
 
-    const result = await processMobule.findByIdAndUpdate(
-      {
-        _id: req.params.id,
-      },
-      req.body
-    );
+    for (const node of nodes) {
+      const newNode = { ...node, ...node.data };
+      await nodeModule.updateOne({ id: node.id }, newNode, { upsert: true });
+    }
+
+    for (const edge of edges) {
+      await nodeModule.updateOne({ id: edge.id }, edge, { upsert: true });
+    }
+
+    const result = await processMobule.findByIdAndUpdate(req.params.id, {
+      ...req.body,
+      nodes: nodes.map((node) => node.id),
+      edges: edges.map((edge) => edge.id),
+    });
 
     return res
       .status(STATUS_CODE.SUCCESS)
@@ -131,6 +152,7 @@ const copyProcess = async (req, res) => {
       createByUser: req.user,
       project: [],
       status: 1,
+      isDisabled: false,
     };
 
     const result = await processMobule.create(newProcess);
@@ -147,6 +169,8 @@ const deleteProcess = async (req, res) => {
     const processDeleted = await processMobule.deleteOne({
       _id: req.params.id,
     });
+
+    await nodeModule.deleteMany({ process: req.params.id });
 
     return res
       .status(STATUS_CODE.SUCCESS)
