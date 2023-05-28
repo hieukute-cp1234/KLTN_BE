@@ -1,4 +1,5 @@
 export const PORT = 8080;
+export const LAN = "192.168.0.112";
 export const DB_KEY = "mongodb://127.0.0.1:27017/process_data_base";
 export const DEFAULT_SOURCE = "/api";
 

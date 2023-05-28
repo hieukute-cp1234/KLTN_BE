@@ -11,7 +11,10 @@ export const authorization = async (req, res, next) => {
     }
 
     const dataUser = await verityToken(token);
-    req.user = dataUser._id;
+    req.user = dataUser.data.user;
+    req.email = dataUser.data.email;
+    req.role = dataUser.data.role;
+
     next();
   } catch (error) {
     return res.status(500).json(response(null, error.message));

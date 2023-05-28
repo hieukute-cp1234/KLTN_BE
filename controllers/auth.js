@@ -53,8 +53,12 @@ const login = async (req, res) => {
         .json(response(null, "password vua nhap khong dung"));
     }
 
-    const token = await generateToken(checkEmail._id);
-    return res.status(200).json(response(token, "dang nhap thanh cong"));
+    const token = await generateToken({
+      user: checkEmail._id,
+      email: checkEmail.email,
+      role: checkEmail.role,
+    });
+    return res.status(200).json(response({ token }, "dang nhap thanh cong"));
   } catch (error) {
     return res.status(500).json(error);
   }

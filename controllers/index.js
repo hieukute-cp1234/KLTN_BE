@@ -1,5 +1,13 @@
-import authController from "../controllers/auth.js";
-import processController from "../controllers/process.js";
-import sopportController from "../controllers/support.js";
+import authController from "./auth.js";
+import processController from "./process.js";
+import sopportController from "./support.js";
+import roleContoller from "./role.js";
+import userController from "./user.js";
 
-export { authController, processController, sopportController };
+export {
+  authController,
+  processController,
+  sopportController,
+  roleContoller,
+  userController,
+};
