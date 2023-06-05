@@ -21,6 +21,10 @@ const RoleSchema = new Schema(
       type: Number,
       default: 1,
     },
+    code: {
+      type: String,
+      default: "",
+    },
     createdAt: {
       type: Date,
       default: Date.now(),

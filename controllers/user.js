@@ -13,7 +13,7 @@ const fetchAllUser = async (_req, res) => {
 
 const fetchMe = async (req, res) => {
   try {
-    const result = await userModule.findOne({ _id: req.user });
+    const result = await userModule.findOne({ _id: req.user }, { password: 0 });
     return res.status(STATUS_CODE.SUCCESS).json(response(result, null));
   } catch (error) {
     return res.status(STATUS_CODE.SERVER).json(response(error));
