@@ -6,9 +6,14 @@ const router = express.Router();
 
 router.get("/process", authorization, processController.fetchAllProcess);
 router.get("/process/:id", authorization, processController.fetchProcessById);
-router.post("/process", processController.createProcess);
+router.post("/process", authorization, processController.createProcess);
 router.post("/process/:id", authorization, processController.copyProcess);
 router.put("/process/:id", authorization, processController.updateProcess);
+router.put(
+  "/publish-process/:id",
+  authorization,
+  processController.publishProcess
+);
 router.delete("/process/:id", authorization, processController.deleteProcess);
 
 export default router;

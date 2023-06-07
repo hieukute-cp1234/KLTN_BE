@@ -19,9 +19,9 @@ const NodeSchema = new Schema(
       default: "#ffffff",
     },
     role: {
-      type: Number,
+      type: String,
       trim: true,
-      default: 1,
+      default: "",
     },
     input: {
       type: String,

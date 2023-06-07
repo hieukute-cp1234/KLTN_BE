@@ -13,7 +13,11 @@ const fetchAllProcess = async (req, res) => {
     if (publish) condition.publish = publish;
     if (status) condition.status = status;
 
-    const allProcess = await processMobule.find(condition);
+    const allProcess = await processMobule
+      .find(condition)
+      .populate("nodes")
+      .populate("roles")
+      .populate("edges");
 
     return res.status(STATUS_CODE.SUCCESS).json(response(allProcess, null));
   } catch (error) {
@@ -23,7 +27,11 @@ const fetchAllProcess = async (req, res) => {
 
 const fetchProcessById = async (req, res) => {
   try {
-    const process = await processMobule.findOne({ _id: req.params.id });
+    const process = await processMobule
+      .findOne({ _id: req.params.id })
+      .populate("nodes")
+      .populate("roles")
+      .populate("edges");
 
     if (!process) {
       return res
@@ -39,17 +47,16 @@ const fetchProcessById = async (req, res) => {
 
 const createProcess = async (req, res) => {
   try {
-    const { name, description, listRole, project, nodes, edges, publish } =
-      req.body;
+    const { name, description, roles, project, nodes, edges } = req.body;
     const checkProcess = await processMobule.findOne({ name });
 
     if (checkProcess) {
       return res
         .status(STATUS_CODE.VALIDATE)
-        .json(response(null, "process da ton tai!"));
+        .json(response(null, "Process already exist!"));
     }
 
-    if (!nodes?.length || !edges.length) {
+    if (!nodes?.length) {
       return res
         .status(STATUS_CODE.VALIDATE)
         .json(response(null, "workflow chua dc nhap!"));
@@ -60,10 +67,10 @@ const createProcess = async (req, res) => {
       description: description || "",
       nodes: nodes.map((node) => node.id),
       edges: edges.map((edge) => edge.id),
-      roles: listRole || [],
+      roles: roles || [],
       project: project || [],
       createByUser: req.user,
-      publish: publish || 1,
+      publish: req.role === 1 ? 1 : 0,
       isDisabled: false,
       status: 1,
     };
@@ -132,9 +139,25 @@ const updateProcess = async (req, res) => {
   }
 };
 
+const publishProcess = async (req, res) => {
+  try {
+    const { publish } = req.body;
+
+    const result = await processMobule.findByIdAndUpdate(req.params.id, {
+      publish: publish,
+    });
+
+    return res
+      .status(STATUS_CODE.SUCCESS)
+      .json(response(result, "tao process thanh cong"));
+  } catch (error) {
+    return res.status(STATUS_CODE.SERVER).json(response(error));
+  }
+};
+
 const copyProcess = async (req, res) => {
   try {
-    const processById = processMobule.findOne({ _id: req.params.id });
+    const processById = await processMobule.findOne({ _id: req.params.id });
 
     if (!processById) {
       return res
@@ -147,8 +170,8 @@ const copyProcess = async (req, res) => {
       description: processById.description || "",
       nodes: processById.nodes || [],
       edges: processById.edges || [],
-      publish: processById.publish || 1,
-      roles: processById.listRole || [],
+      publish: 0,
+      roles: processById.roles || [],
       createByUser: req.user,
       project: [],
       status: 1,
@@ -158,7 +181,7 @@ const copyProcess = async (req, res) => {
     const result = await processMobule.create(newProcess);
     return res
       .status(STATUS_CODE.SUCCESS)
-      .json(response(result, "tao process thanh cong"));
+      .json(response(result, "Copy process success!"));
   } catch (error) {
     return res.status(STATUS_CODE.SERVER).json(response(error));
   }
@@ -183,6 +206,7 @@ const deleteProcess = async (req, res) => {
 export default {
   createProcess,
   updateProcess,
+  publishProcess,
   copyProcess,
   deleteProcess,
   fetchAllProcess,

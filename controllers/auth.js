@@ -58,7 +58,7 @@ const login = async (req, res) => {
       email: checkEmail.email,
       role: checkEmail.role,
     });
-    return res.status(200).json(response({ token }, "dang nhap thanh cong"));
+    return res.status(200).json(response({ token }, null));
   } catch (error) {
     return res.status(500).json(error);
   }
