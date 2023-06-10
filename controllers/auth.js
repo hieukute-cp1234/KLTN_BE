@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import users from "../modules/users.js";
-import { generateToken } from "../helpers/jwt.js";
+import { generateToken, verityToken } from "../helpers/jwt.js";
 import { response } from "../helpers/index.js";
 
 const register = async (req, res) => {
@@ -64,4 +64,14 @@ const login = async (req, res) => {
   }
 };
 
-export default { register, login };
+const loginGoogle = (req, res) => {
+  try {
+    const { token } = req.body;
+    const userGoogle = verityToken(token);
+    console.log(userGoogle);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+
+export default { register, login, loginGoogle };

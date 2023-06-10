@@ -22,12 +22,17 @@ const generateToken = (payload) => {
 
 const verityToken = (token) => {
   return new Promise((resolve, reject) => {
-    jwt.verify(token, TOKEN.KEY, (error, decoded) => {
-      if (error) {
-        reject(error);
+    jwt.verify(
+      token,
+      TOKEN.KEY,
+      { algorithms: ["RS256", "HS256"] },
+      (error, decoded) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(decoded);
       }
-      resolve(decoded);
-    });
+    );
   });
 };
 

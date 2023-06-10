@@ -3,7 +3,8 @@ import authRoute from "./auth.js";
 import processRoute from "./process.js";
 import supportRoute from "./support.js";
 import roleRoute from "./role.js";
-import userRoute from './user.js';
+import userRoute from "./user.js";
+import projectRoute from "./project.js";
 
 export const routes = (app) => {
   app.use(DEFAULT_SOURCE, authRoute);
@@ -11,4 +12,5 @@ export const routes = (app) => {
   app.use(DEFAULT_SOURCE, supportRoute);
   app.use(DEFAULT_SOURCE, roleRoute);
   app.use(DEFAULT_SOURCE, userRoute);
+  app.use(DEFAULT_SOURCE, projectRoute);
 };
