@@ -4,7 +4,9 @@ import { STATUS_CODE } from "../constants/index.js";
 
 const fetchAllProject = async (req, res) => {
   try {
-    const result = await projectModule.find({});
+    const result = await projectModule
+      .find({})
+      .populate("manager", ["userName", "email"]);
     return res.status(STATUS_CODE.SUCCESS).json(response(result, null));
   } catch (error) {
     return res.status(STATUS_CODE.SERVER).json(response(error));
@@ -46,9 +48,10 @@ const createProject = async (req, res) => {
 const updateProject = async (req, res) => {
   try {
     const { name } = req.body;
+    const projectSelect = await projectModule.findOne({ _id: req.params.id });
     const checkProject = await projectModule.findOne({ name });
 
-    if (checkProject) {
+    if (projectSelect.name !== name && checkProject) {
       return res
         .status(STATUS_CODE.VALIDATE)
         .json(response(null, "project da ton tai!"));

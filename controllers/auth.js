@@ -24,7 +24,7 @@ const register = async (req, res) => {
     const newUser = {
       email: email,
       password: handlePass,
-      userName: userName || "",
+      userName: email.split("@")[0],
     };
     const result = await users.create(newUser);
     return res.status(200).json(response(result, "dang ki thanh cong"));

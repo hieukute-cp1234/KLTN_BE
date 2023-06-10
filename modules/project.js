@@ -35,6 +35,10 @@ const ProjectSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "process",
     },
+    endDate: {
+      type: String,
+      default: "",
+    },
     createdAt: {
       type: Date,
       default: Date.now(),
