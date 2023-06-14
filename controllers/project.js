@@ -1,4 +1,5 @@
 import projectModule from "../modules/project.js";
+import userMobule from "../modules/users.js";
 import { response } from "../helpers/index.js";
 import { STATUS_CODE } from "../constants/index.js";
 
@@ -15,7 +16,19 @@ const fetchAllProject = async (req, res) => {
 
 const fetchProjectById = async (req, res) => {
   try {
-    const result = await projectModule.findOne({ _id: req.params.id });
+    const result = await projectModule
+      .findOne({ _id: req.params.id })
+      .populate({
+        path: "process",
+        populate: [
+          { path: "nodes" },
+          { path: "edges" },
+          { path: "createByUser" },
+        ],
+      })
+      .populate("manager")
+      .populate("members", ["userName", "email", "role"])
+      .exec();
     return res.status(STATUS_CODE.SUCCESS).json(response(result, null));
   } catch (error) {
     return res.status(STATUS_CODE.SERVER).json(response(error));
@@ -24,7 +37,7 @@ const fetchProjectById = async (req, res) => {
 
 const createProject = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, members } = req.body;
     const checkProject = await projectModule.findOne({ name });
 
     if (checkProject) {
@@ -36,6 +49,15 @@ const createProject = async (req, res) => {
     const newProject = { ...req.body, tasks: [], manager: req.user, status: 1 };
 
     const result = await projectModule.create(newProject);
+
+    const updateMember = members.map(async (user) => {
+      const userSelected = await userMobule.findOne({ _id: user });
+      return userMobule.findByIdAndUpdate(user, {
+        project: [...userSelected.project, result.id],
+      });
+    });
+
+    await Promise.all(updateMember);
 
     return res
       .status(STATUS_CODE.SUCCESS)

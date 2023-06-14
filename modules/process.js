@@ -37,6 +37,7 @@ const ProcessSchema = new Schema(
     },
     createByUser: {
       type: Schema.Types.ObjectId,
+      ref: "users",
     },
     nodes: [
       {

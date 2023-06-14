@@ -4,6 +4,7 @@ import sopportController from "./support.js";
 import roleContoller from "./role.js";
 import userController from "./user.js";
 import projectController from "./project.js";
+import taskController from "./task.js";
 
 export {
   authController,
@@ -12,4 +13,5 @@ export {
   roleContoller,
   userController,
   projectController,
+  taskController,
 };

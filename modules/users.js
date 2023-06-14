@@ -37,15 +37,23 @@ const UserSchema = new Schema(
       trim: true,
       default: null,
     },
-    project: {
-      type: Array,
-      default: [],
-    },
+    project: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "projects",
+      },
+    ],
+    tasks: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "tasks",
+      },
+    ],
     role: {
       type: Number,
       default: 1,
     },
-    avater: {
+    avatar: {
       type: String,
     },
     createdAt: {

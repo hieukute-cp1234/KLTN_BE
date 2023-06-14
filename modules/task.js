@@ -21,11 +21,23 @@ const TaskSchema = new Schema(
     },
     project: {
       type: Schema.Types.ObjectId,
-      ref: "project",
+      ref: "projects",
     },
     processStep: {
       type: Schema.Types.ObjectId,
       ref: "nodes",
+    },
+    manager: {
+      type: Schema.Types.ObjectId,
+      ref: "users",
+    },
+    effort: {
+      type: Number,
+      default: 1,
+    },
+    effortType: {
+      type: Number,
+      default: 1,
     },
     createdAt: {
       type: Date,

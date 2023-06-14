@@ -17,7 +17,8 @@ const fetchAllProcess = async (req, res) => {
       .find(condition)
       .populate("nodes")
       .populate("roles")
-      .populate("edges");
+      .populate("edges")
+      .populate("createByUser", ["email"]);
 
     return res.status(STATUS_CODE.SUCCESS).json(response(allProcess, null));
   } catch (error) {
