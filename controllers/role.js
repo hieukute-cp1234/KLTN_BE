@@ -4,7 +4,7 @@ import { STATUS_CODE } from "../constants/index.js";
 
 const fetchAllRole = async (_req, res) => {
   try {
-    const result = await roleModule.find({});
+    const result = await roleModule.find({}).sort({ createdAt: 'desc' });
     return res.status(STATUS_CODE.SUCCESS).json(response(result, null));
   } catch (error) {
     return res.status(STATUS_CODE.SERVER).json(response(error));
@@ -43,14 +43,17 @@ const updateRole = async (req, res) => {
     const { name } = req.body;
 
     const role = await roleModule.findOne({ name });
+    const roleCurrent = await roleModule.findOne({ _id: req.params.id });
 
-    if (role) {
+    if (roleCurrent.name !== name && role) {
       return res
         .status(STATUS_CODE.VALIDATE)
         .json(response(null, "Role name already exist!"));
     }
 
-    const result = await roleModule.findByIdAndUpdate(req.params.id, req.body);
+    const result = await roleModule.findByIdAndUpdate(req.params.id, {
+      ...req.body,
+    });
 
     return res
       .status(STATUS_CODE.SUCCESS)

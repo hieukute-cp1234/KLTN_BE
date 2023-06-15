@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, SchemaType, model } from "mongoose";
 import bcrypt from "bcrypt";
 import { configSchema } from "../configs/module.js";
 
@@ -13,8 +13,6 @@ const UserSchema = new Schema(
     userName: {
       type: String,
       required: true,
-      maxLength: 255,
-      minLength: 6,
       trim: true,
     },
     password: {
@@ -47,6 +45,12 @@ const UserSchema = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: "tasks",
+      },
+    ],
+    processCreated: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "process",
       },
     ],
     role: {

@@ -7,6 +7,10 @@ const TaskSchema = new Schema(
       type: String,
       default: "",
     },
+    code: {
+      type: String,
+      default: "",
+    },
     mention: {
       type: Schema.Types.ObjectId,
       ref: "users",

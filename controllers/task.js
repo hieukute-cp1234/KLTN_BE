@@ -13,7 +13,9 @@ const fetchTaskByUser = async (req, res) => {
     if (projectId) conditions.project = projectId;
     if (userId) conditions.mention = userId;
 
-    const tasks = await taskModule.find(conditions);
+    const tasks = await taskModule
+      .find(conditions)
+      .populate("mention", ["userName", "email"]);
 
     return res.status(STATUS_CODE.SUCCESS).json(response(tasks, null));
   } catch (error) {
@@ -76,4 +78,23 @@ const deleteTask = async (req, res) => {
   }
 };
 
-export default { fetchTaskByUser, createTask, updateTask, deleteTask };
+const updateStatusTask = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const result = await taskModule.findByIdAndUpdate(req.params.id, {
+      status: status,
+    });
+
+    return res.status(STATUS_CODE.SUCCESS).json(response(result, null));
+  } catch (error) {
+    return res.status(STATUS_CODE.SERVER).json(response(error));
+  }
+};
+
+export default {
+  fetchTaskByUser,
+  createTask,
+  updateTask,
+  deleteTask,
+  updateStatusTask,
+};

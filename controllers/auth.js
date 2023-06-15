@@ -24,7 +24,7 @@ const register = async (req, res) => {
     const newUser = {
       email: email,
       password: handlePass,
-      userName: email.split("@")[0],
+      userName: userName || email.split("@")[0],
     };
     const result = await users.create(newUser);
     return res.status(200).json(response(result, "dang ki thanh cong"));
@@ -68,7 +68,6 @@ const loginGoogle = (req, res) => {
   try {
     const { token } = req.body;
     const userGoogle = verityToken(token);
-    console.log(userGoogle);
   } catch (error) {
     return res.status(500).json(error);
   }

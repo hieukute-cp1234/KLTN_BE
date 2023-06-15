@@ -1,16 +1,18 @@
-POST http://192.168.0.112:8080/api/register
+###
+
+POST http://localhost:8080/api/register
 Content-Type: application/json
 
 {
- "email": "admin@vnext.vn",
+ "email": "khoipv@vnext.vn",
  "password": "123456",
- "userName": "admin1",
- "role": 1
+ "userName": "khoipv",
+ "role": 2
 }
 
 ###
 
-POST http://192.168.0.112:8080/api/login-google
+POST http://localhost:8080/api/login-google
 Content-Type: application/json
 
 {
@@ -19,7 +21,7 @@ Content-Type: application/json
 
 ###
 
-POST http://192.168.0.112:8080/api/login
+POST http://localhost:8080/api/login
 Content-Type: application/json
 
 {
@@ -82,7 +84,7 @@ content-type: application/json
 
 
 ###
-GET http://192.168.0.105:8080/api/role
+GET http://localhost:8080/api/role
 content-type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXIiOiI2NDZiODJmMzRjMjkwZjZjYzc3MDkwYTAiLCJlbWFpbCI6ImhpZXV2bUB2bmV4dC52biIsInJvbGUiOjF9LCJpYXQiOjE2ODUyODAzODIsImV4cCI6MTY4NTM2Njc4Mn0.4Yne643qhpb6TJB9NXlXavylVkKXYGAwaZ_9X1vCQG4
 

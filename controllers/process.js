@@ -1,6 +1,7 @@
 import processMobule from "../modules/process.js";
 import nodeModule from "../modules/nodes.js";
 import edgeModule from "../modules/edges.js";
+import userModule from "../modules/users.js";
 import { response } from "../helpers/index.js";
 import { STATUS_CODE } from "../constants/index.js";
 
@@ -14,7 +15,7 @@ const fetchAllProcess = async (req, res) => {
     if (status) condition.status = status;
 
     const allProcess = await processMobule
-      .find(condition)
+      .find({ $or: [{ createByUser: req.user }, { publish: 1 }] })
       .populate("nodes")
       .populate("roles")
       .populate("edges")
@@ -50,6 +51,7 @@ const createProcess = async (req, res) => {
   try {
     const { name, description, roles, project, nodes, edges } = req.body;
     const checkProcess = await processMobule.findOne({ name });
+    const userCreated = await userModule.findOne({ _id: req.user });
 
     if (checkProcess) {
       return res
@@ -77,6 +79,9 @@ const createProcess = async (req, res) => {
     };
 
     const result = await processMobule.create(newProcess);
+    await userModule.findByIdAndUpdate(req.user, {
+      processCreated: [...userCreated.processCreated, result.id],
+    });
 
     const createNodes = nodes.map((node) => {
       const newNode = {
@@ -119,11 +124,11 @@ const updateProcess = async (req, res) => {
 
     for (const node of nodes) {
       const newNode = { ...node, ...node.data };
-      await nodeModule.updateOne({ id: node.id }, newNode, { upsert: true });
+      await nodeModule.updateOne({ _id: node.id }, newNode, { upsert: true });
     }
 
     for (const edge of edges) {
-      await nodeModule.updateOne({ id: edge.id }, edge, { upsert: true });
+      await nodeModule.updateOne({ _id: edge.id }, edge, { upsert: true });
     }
 
     const result = await processMobule.findByIdAndUpdate(req.params.id, {
@@ -134,7 +139,7 @@ const updateProcess = async (req, res) => {
 
     return res
       .status(STATUS_CODE.SUCCESS)
-      .json(response(result, "tao process thanh cong"));
+      .json(response(result, "Update process success!"));
   } catch (error) {
     return res.status(STATUS_CODE.SERVER).json(response(error));
   }
@@ -159,6 +164,7 @@ const publishProcess = async (req, res) => {
 const copyProcess = async (req, res) => {
   try {
     const processById = await processMobule.findOne({ _id: req.params.id });
+    const userCreated = await userModule.findOne({ _id: req.user });
 
     if (!processById) {
       return res
@@ -180,6 +186,11 @@ const copyProcess = async (req, res) => {
     };
 
     const result = await processMobule.create(newProcess);
+
+    await userModule.findByIdAndUpdate(req.user, {
+      processCreated: [...userCreated.processCreated, result.id],
+    });
+
     return res
       .status(STATUS_CODE.SUCCESS)
       .json(response(result, "Copy process success!"));

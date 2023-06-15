@@ -11,6 +11,14 @@ const EdgeSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "nodes",
     },
+    sourceHandle: {
+      type: String,
+      default: "",
+    },
+    targetHandle: {
+      type: String,
+      defualt: "",
+    },
     label: {
       type: String,
       trim: true,
