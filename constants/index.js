@@ -5,6 +5,11 @@ export const WEB_KEY =
   "mongodb+srv://hieukute:Hu60JB1ZjK41Tra6@process-hieu.6zji7y6.mongodb.net/?retryWrites=true&w=majority";
 export const DEFAULT_SOURCE = "/api";
 
+export const authSendMail = {
+  user: "nguyentrongtiktok0196@gmail.com",
+  pass: "jfmvmshdddocbeua",
+};
+
 export const TOKEN = {
   KEY: "Access_Token_Secret",
   TIME: "24h",

@@ -1,6 +1,6 @@
 import projectModule from "../modules/project.js";
-import userMobule from "../modules/users.js";
-import { response } from "../helpers/index.js";
+import userModule from "../modules/users.js";
+import { response, sendMail } from "../helpers/index.js";
 import { STATUS_CODE } from "../constants/index.js";
 
 const fetchAllProject = async (req, res) => {
@@ -9,6 +9,18 @@ const fetchAllProject = async (req, res) => {
       .find({})
       .populate("manager", ["userName", "email"]);
     return res.status(STATUS_CODE.SUCCESS).json(response(result, null));
+  } catch (error) {
+    return res.status(STATUS_CODE.SERVER).json(response(error));
+  }
+};
+
+const fetchProjectByUSer = async (req, res) => {
+  try {
+    const result = await projectModule.find({});
+    const projectByUser = result.filter((project) =>
+      project.members.includes(req.user)
+    );
+    return res.status(STATUS_CODE.SUCCESS).json(response(projectByUser, null));
   } catch (error) {
     return res.status(STATUS_CODE.SERVER).json(response(error));
   }
@@ -49,15 +61,24 @@ const createProject = async (req, res) => {
     const newProject = { ...req.body, tasks: [], manager: req.user, status: 1 };
 
     const result = await projectModule.create(newProject);
+    const userAssign = await userModule.findOne({ _id: req.user });
 
+    const allMailMembers = [];
     const updateMember = members.map(async (user) => {
-      const userSelected = await userMobule.findOne({ _id: user });
-      return userMobule.findByIdAndUpdate(user, {
+      const userSelected = await userModule.findOne({ _id: user });
+      allMailMembers.push(userSelected.email);
+      return userModule.findByIdAndUpdate(user, {
         project: [...userSelected.project, result.id],
       });
     });
 
     await Promise.all(updateMember);
+
+    sendMail({
+      emailFrom: userAssign.email,
+      emailTo: allMailMembers,
+      content: `<p>You have been added to the project <a href="http://localhost:3000/user/my-task">${result.name}</a> by ${userAssign.email}</p>`,
+    });
 
     return res
       .status(STATUS_CODE.SUCCESS)
@@ -111,4 +132,5 @@ export default {
   createProject,
   updateProject,
   deleteProject,
+  fetchProjectByUSer,
 };

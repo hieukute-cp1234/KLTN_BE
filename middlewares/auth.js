@@ -7,7 +7,7 @@ export const authorization = async (req, res, next) => {
     const token = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
-      return res.status(402).json(response(null, "Access token not found"));
+      return res.status(401).json(response(null, "Access token not found"));
     }
 
     const dataUser = await verityToken(token);
@@ -17,6 +17,6 @@ export const authorization = async (req, res, next) => {
 
     next();
   } catch (error) {
-    return res.status(500).json(response(null, error.message));
+    return res.status(401).json(response(null, error.message));
   }
 };
