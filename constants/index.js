@@ -6,8 +6,8 @@ export const WEB_KEY =
 export const DEFAULT_SOURCE = "/api";
 
 export const authSendMail = {
-  user: "nguyentrongtiktok0196@gmail.com",
-  pass: "jfmvmshdddocbeua",
+  user: "hieuvmm3003@gmail.com",
+  pass: "miewoqaqnkaqavum",
 };
 
 export const TOKEN = {

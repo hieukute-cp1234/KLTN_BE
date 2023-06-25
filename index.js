@@ -1,8 +1,9 @@
 import express from "express";
 import cors from "cors";
 import { routes } from "./routers/index.js";
-import { PORT, LAN } from "./constants/index.js";
+import { PORT } from "./constants/index.js";
 import { connectMongooDB } from "./configs/index.js";
+import { connectSocket } from "./configs/socket.js";
 
 const app = express();
 const corsOptions = {
@@ -15,7 +16,10 @@ const corsOptions = {
 connectMongooDB();
 
 app.use(cors(corsOptions));
+app.use("/files", express.static("upload"));
 app.use(express.json());
+
+connectSocket();
 
 //use route
 routes(app);

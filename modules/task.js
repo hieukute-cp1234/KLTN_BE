@@ -47,6 +47,12 @@ const TaskSchema = new Schema(
       type: Number,
       default: 1,
     },
+    messages: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "messages",
+      },
+    ],
     createdAt: {
       type: Date,
       default: Date.now(),

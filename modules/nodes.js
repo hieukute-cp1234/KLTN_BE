@@ -53,6 +53,10 @@ const NodeSchema = new Schema(
       type: Number,
       default: 1,
     },
+    step: {
+      type: Number,
+      default: 0,
+    },
     data: {
       type: Object,
       default: {},

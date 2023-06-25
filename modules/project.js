@@ -35,6 +35,20 @@ const ProjectSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "process",
     },
+    documents: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "documents",
+      },
+    ],
+    inputProcess: {
+      type: Array,
+      default: [],
+    },
+    outputProcess: {
+      type: Array,
+      default: [],
+    },
     endDate: {
       type: String,
       default: "",

@@ -6,6 +6,7 @@ import roleRoute from "./role.js";
 import userRoute from "./user.js";
 import projectRoute from "./project.js";
 import taskRoute from "./task.js";
+import documentRoute from "./document.js";
 
 export const routes = (app) => {
   app.use(DEFAULT_SOURCE, authRoute);
@@ -15,4 +16,5 @@ export const routes = (app) => {
   app.use(DEFAULT_SOURCE, userRoute);
   app.use(DEFAULT_SOURCE, projectRoute);
   app.use(DEFAULT_SOURCE, taskRoute);
+  app.use(DEFAULT_SOURCE, documentRoute);
 };

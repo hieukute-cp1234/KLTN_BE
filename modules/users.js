@@ -57,6 +57,10 @@ const UserSchema = new Schema(
       type: Number,
       default: 1,
     },
+    specialize: {
+      type: Schema.Types.ObjectId,
+      ref: "roles",
+    },
     avatar: {
       type: String,
     },

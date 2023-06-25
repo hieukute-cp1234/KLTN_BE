@@ -5,8 +5,14 @@ import { STATUS_CODE } from "../constants/index.js";
 
 const fetchAllProject = async (req, res) => {
   try {
+    const { search } = req.query;
+
+    const condition = {};
+
+    if (search) condition.name = { $regex: search, $options: "i" };
+
     const result = await projectModule
-      .find({})
+      .find(condition)
       .populate("manager", ["userName", "email"]);
     return res.status(STATUS_CODE.SUCCESS).json(response(result, null));
   } catch (error) {
@@ -40,6 +46,7 @@ const fetchProjectById = async (req, res) => {
       })
       .populate("manager")
       .populate("members", ["userName", "email", "role"])
+      .populate("documents")
       .exec();
     return res.status(STATUS_CODE.SUCCESS).json(response(result, null));
   } catch (error) {

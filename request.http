@@ -89,6 +89,10 @@ content-type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXIiOiI2NDZiODJmMzRjMjkwZjZjYzc3MDkwYTAiLCJlbWFpbCI6ImhpZXV2bUB2bmV4dC52biIsInJvbGUiOjF9LCJpYXQiOjE2ODUyODAzODIsImV4cCI6MTY4NTM2Njc4Mn0.4Yne643qhpb6TJB9NXlXavylVkKXYGAwaZ_9X1vCQG4
 
 ###
-GET http://localhost:8080/api/me
-content-type: application/json
+POST http://localhost:8080/api/upload
+content-type: multipart/form-data
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXIiOiI2NDZiODJmMzRjMjkwZjZjYzc3MDkwYTAiLCJlbWFpbCI6ImhpZXV2bUB2bmV4dC52biIsInJvbGUiOjF9LCJpYXQiOjE2ODU5NzEyMDksImV4cCI6MTY4NjA1NzYwOX0.a5tn_RWGTRQu5PpXBblsx1LuozqIOORo9GAOrxhzM1o
+
+{
+  "file": ""
+}

@@ -24,6 +24,25 @@ const fetchTaskByUser = async (req, res) => {
   }
 };
 
+const fetchTaskById = async (req, res) => {
+  try {
+    const currentTask = await taskModule
+      .findOne({ _id: req.params.id })
+      .populate("mention", ["userName", "email"])
+      .populate("manager", ["email"])
+      .populate("project", ["name"])
+      .populate("processStep", ["title"])
+      .populate({
+        path: "messages",
+        populate: [{ path: "createByUser" }],
+      });
+
+    return res.status(STATUS_CODE.SUCCESS).json(response(currentTask, null));
+  } catch (error) {
+    return res.status(STATUS_CODE.SERVER).json(response(error));
+  }
+};
+
 const createTask = async (req, res) => {
   try {
     const newTask = { ...req.body, manager: req.user, status: 1 };
@@ -154,4 +173,5 @@ export default {
   updateTask,
   deleteTask,
   updateStatusTask,
+  fetchTaskById,
 };

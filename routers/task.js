@@ -5,6 +5,7 @@ import { authorization } from "../middlewares/auth.js";
 const router = express.Router();
 
 router.get("/task", authorization, taskController.fetchTaskByUser);
+router.get("/task/:id", authorization, taskController.fetchTaskById);
 router.post("/task", authorization, taskController.createTask);
 router.put("/task/:id", authorization, taskController.updateTask);
 router.delete("/task/:id", authorization, taskController.deleteTask);

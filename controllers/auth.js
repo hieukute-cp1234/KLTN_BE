@@ -5,9 +5,9 @@ import { response } from "../helpers/index.js";
 
 const register = async (req, res) => {
   try {
-    const { email, password, userName } = req.body;
+    const { email, password, userName, specialize } = req.body;
 
-    if (!email || !password) {
+    if (!email) {
       return res.status(400).json(response(null, "email la bat buoc"));
     }
 
@@ -19,15 +19,18 @@ const register = async (req, res) => {
 
     const saltRounds = 10;
     const salt = bcrypt.genSaltSync(saltRounds);
-    const handlePass = bcrypt.hashSync(password, salt);
+    const handlePass = bcrypt.hashSync(password || "123456", salt);
 
     const newUser = {
       email: email,
       password: handlePass,
       userName: userName || email.split("@")[0],
+      specialize: specialize,
+      reole: 2,
     };
+
     const result = await users.create(newUser);
-    return res.status(200).json(response(result, "dang ki thanh cong"));
+    return res.status(200).json(response(result, "Create account success!"));
   } catch (error) {
     return res.status(500).json(error);
   }

@@ -7,15 +7,13 @@ import { STATUS_CODE } from "../constants/index.js";
 
 const fetchAllProcess = async (req, res) => {
   try {
-    const { userId, publish, status } = req.query;
-    const condition = {};
+    const { search } = req.query;
+    const condition = { $or: [{ createByUser: req.user }, { publish: 1 }] };
 
-    if (userId) condition.createByUser = userId;
-    if (publish) condition.publish = publish;
-    if (status) condition.status = status;
+    if (search) condition.name = { $regex: search, $options: "i" };
 
     const allProcess = await processMobule
-      .find({ $or: [{ createByUser: req.user }, { publish: 1 }] })
+      .find(condition)
       .populate("nodes")
       .populate("roles")
       .populate("edges")
@@ -173,7 +171,7 @@ const copyProcess = async (req, res) => {
     }
 
     const newProcess = {
-      name: `${processById.name} copy`,
+      name: `${processById.name} ${userCreated.userName} copy`,
       description: processById.description || "",
       nodes: processById.nodes || [],
       edges: processById.edges || [],
@@ -201,7 +199,21 @@ const copyProcess = async (req, res) => {
 
 const deleteProcess = async (req, res) => {
   try {
-    const processDeleted = await processMobule.deleteOne({
+    const processDeleted = await processMobule.findOne({ _id: req.params.id });
+
+    if (processDeleted && processDeleted.project.length) {
+      await processMobule.findByIdAndUpdate(req.params.id, {
+        isDisabled: true,
+      });
+
+      return res
+        .status(STATUS_CODE.SUCCESS)
+        .json(
+          response(processDeleted, "Process is active, cannot be deleted!")
+        );
+    }
+
+    await processMobule.deleteOne({
       _id: req.params.id,
     });
 
