@@ -15,9 +15,9 @@ export const connectSocket = () => {
       io.emit("updateTask", task);
     });
 
-    socket.on("userChat", async (message) => {
-      const newMessage = await updateMessageToDatabase(message);
-      io.emit("chatFeegback", newMessage);
+    socket.on("userChat", async (value) => {
+      const newMessage = await updateMessageToDatabase(value);
+      io.emit("chatFeedback", newMessage);
     });
   });
 };

@@ -13,6 +13,10 @@ const MessageSchema = new Schema(
       trim: true,
       default: "",
     },
+    files: {
+      type: Array,
+      default: [],
+    },
     createByUser: {
       type: Schema.Types.ObjectId,
       ref: "users",

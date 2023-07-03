@@ -47,6 +47,10 @@ const TaskSchema = new Schema(
       type: Number,
       default: 1,
     },
+    dueDate: {
+      type: String,
+      default: "",
+    },
     messages: [
       {
         type: Schema.Types.ObjectId,

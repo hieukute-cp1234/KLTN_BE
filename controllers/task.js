@@ -1,6 +1,7 @@
 import taskModule from "../modules/task.js";
 import projectModule from "../modules/project.js";
 import userModule from "../modules/users.js";
+import messageModule from "../modules/messages.js";
 import { response, sendMail } from "../helpers/index.js";
 import { STATUS_CODE } from "../constants/index.js";
 
@@ -45,11 +46,31 @@ const fetchTaskById = async (req, res) => {
 
 const createTask = async (req, res) => {
   try {
-    const newTask = { ...req.body, manager: req.user, status: 1 };
-    const result = await taskModule.create(newTask);
-
     const { project, mention, type, name } = req.body;
 
+    let typeTask = "Task";
+    if (type === 2) typeTask = "Issue";
+    if (type === 3) typeTask = "Bug";
+
+    const newText = `${typeTask} created by ${req.email}`;
+
+    const currentMessage = {
+      text: newText,
+      type: "text",
+      files: [],
+      createByUser: req.user,
+    };
+
+    const newMessage = await messageModule.create(currentMessage);
+
+    const newTask = {
+      ...req.body,
+      manager: req.user,
+      status: 1,
+      messages: [newMessage.id],
+    };
+
+    const result = await taskModule.create(newTask);
     const projectCurrent = await projectModule.findOne({ _id: project });
 
     await projectModule.findByIdAndUpdate(project, {
@@ -63,14 +84,10 @@ const createTask = async (req, res) => {
       tasks: [...userSelected.tasks, result.id],
     });
 
-    let typeTask = "Task";
-    if (type === 2) typeTask = "Issue";
-    if (type === 3) typeTask = "Bug";
-
     sendMail({
       emailFrom: userAssign.email,
       emailTo: userSelected.email,
-      content: `<p>${typeTask} <a href="http://localhost:3000/user/my-task">${name}</a> created by ${userAssign.email} and assign for you</p>`,
+      content: `<p>${typeTask} <a href="http://localhost:3000/user/my-task/${result.id}">${name}</a> created by ${userAssign.email} and assign for you</p>`,
     });
 
     return res
@@ -95,6 +112,21 @@ const updateTask = async (req, res) => {
     if (result.type === 2) typeTask = "Issue";
     if (result.type === 3) typeTask = "Bug";
 
+    const newText = `${typeTask} changed by ${req.email}`;
+
+    const currentMessage = {
+      text: newText,
+      type: "text",
+      files: [],
+      createByUser: req.user,
+    };
+
+    const newMessage = await messageModule.create(currentMessage);
+
+    await taskModule.findByIdAndUpdate(req.params.id, {
+      messages: [...result.messages, newMessage.id],
+    });
+
     sendMail({
       emailFrom: result.manager.email,
       emailTo: userAssign.email,
@@ -103,8 +135,9 @@ const updateTask = async (req, res) => {
 
     return res
       .status(STATUS_CODE.SUCCESS)
-      .json(response(result, "Update project success!"));
+      .json(response(newMessage, "Update project success!"));
   } catch (error) {
+    console.log(error)
     return res.status(STATUS_CODE.SERVER).json(response(error));
   }
 };
@@ -151,11 +184,27 @@ const updateStatusTask = async (req, res) => {
       }
     };
 
+    const messageUpdateStatus = `${
+      userAssign.email
+    } changed status to ${statusTask(status)}`;
+
+    const currentMessage = {
+      text: messageUpdateStatus,
+      type: "text",
+      files: [],
+      createByUser: userAssign.id,
+    };
+
+    const newMessage = await messageModule.create(currentMessage);
+    await taskModule.findByIdAndUpdate(req.params.id, {
+      messages: [...result.messages, newMessage.id],
+    });
+
     sendMail({
       emailFrom: userAssign.email,
       emailTo: result.manager.email,
-      content: `<p>Status ${typeTask} <a href="http://localhost:3000/user/my-project/${
-        result.project
+      content: `<p>Status ${typeTask} <a href="http://localhost:3000/user/my-task/${
+        req.params.id
       }">${result.name}</a> is changed ${statusTask(status)} by ${
         userAssign.email
       }</p>`,

@@ -8,6 +8,10 @@ const DocumentSchema = new Schema(
       trim: true,
       default: "",
     },
+    originName: {
+      type: String,
+      default: "",
+    },
     file: {
       type: String,
       trim: true,

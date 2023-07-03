@@ -5,7 +5,7 @@ import { STATUS_CODE } from "../constants/index.js";
 
 const deleteDocument = async (req, res) => {
   try {
-    const result = await moduleDocument.deleteMany({ process: req.params.id });
+    const result = await moduleDocument.deleteOne({ _id: req.params.id });
 
     return res
       .status(STATUS_CODE.SUCCESS)
@@ -35,7 +35,7 @@ const updateDocument = async (req, res) => {
 
 const uploadFile = async (req, res) => {
   try {
-    const { projectId, nodeId, taskId, type, label, link } = req.body;
+    const { projectId, label, link } = req.body;
     const file = req.file;
 
     if (projectId) {
@@ -45,6 +45,7 @@ const uploadFile = async (req, res) => {
         file: file ? file.filename : "",
         link: link || "",
         type: file ? file.mimetype : "text",
+        originName: file.originalname || "",
       };
 
       const result = await moduleDocument.create(newDocument);
